@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: watch-pod
+  name: pod-watcher
   labels:
-    app: watch-pod
+    app: pod-watcher
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: watch-pod
+      app: pod-watcher
   template:
     metadata:
       labels:
-        app: watch-pod
+        app: pod-watcher
     spec:
       containers:
-      - name: watch-pod
+      - name: pod-watcher
         image: alpine-kubectl:latest
         command: ["/bin/sh" ,"-c"]
         args:
