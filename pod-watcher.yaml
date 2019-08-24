@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: watch-pod
+  labels:
+    app: watch-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: watch-pod
+  template:
+    metadata:
+      labels:
+        app: watch-pod
+    spec:
+      containers:
+      - name: watch-pod
+        image: alpine-kubectl:latest
+        command: ["/bin/sh" ,"-c"]
+        args:
+        - 'kubectl get pod -A -w
+          | grep -v -E "^(NAMESPACE|kube-system).*" --line-buffered
+          | xargs -I{} curl -s -X POST --data-urlencode
+              "payload={\"channel\": \"${SLACK_CHANNEL}\", \"username\": \"POD WATCHER\", \"text\": \"{}\"}"
+              ${SLACK_URL};'
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: SLACK_URL
+          value: "https://hooks.slack.com/services/XXXXX/XXXXXXXXXXXXXX"
+        - name: SLACK_CHANNEL
+          value: "#XXXXXX"
+      terminationGracePeriodSeconds: 1
+
+
+
+
